@@ -1,0 +1,47 @@
+--------------------------------------
+ varimed_resources_JC2017
+--------------------------------------
+
+Pop_Hapmap3_to_superpopulation
+--mapping Hapmap3 populations to a 1000 Genomes Phase 3 superpopulation
+
+pretest_<ancestry>_<gender>
+--<ancestry> : african, asian, black, caucasian, hispanic, indian
+--<gender>   : male, female
+--total of 10 tables
+--those suffixed with 'old' are, as such, the older version that was inherited
+
+var_varimed_Association_Data_fwd
+--inherited full VARIMED
+
+var_varimed_Association_Data_fwd_final
+--JC2017 changes to var_varimed_Association_Data_fwd:
+(1) retain rows with biallelic loci
+(2) non-empty OR
+(3) with ACGT risk allele
+(4) included columns 'fxn_type' and 'symbol' (from var_dbSNP_b138.SnpFunctionCode and var_dbSNP_b138.SNPContigLocusId; but contains redundant rows, so removed all rows with 'fxn_type' = 'cds-reference')
+(5) included columns 'chr' and 'position'
+
+var_varimed_staging_LR_final
+--inherited table with LR info 
+
+var_varimed_staging_LR_final_ext
+--JC2017 extended version with the following modifications:
+(1) added column 'id' of running numbers
+(2) added column 'cases' (LIKE 'Sample_size_cases')
+(3) added column 'controls' (LIKE 'Sample_size_controls')
+(4) added column 'end' (LIKE 'position')
+(5) included columns 'fxn_type' and 'symbol' as above
+
+var_varimed_staging_LR_final_ext_eth
+(1) added 'Population', 'Population_simple', 'Pop_Hapmap3' and 'gender' info from var_varimed_Association_Data_fwd and var_varimed_staging_LR_final_ext
+
+var_varimed_staging_LR_final_ext_eth_spop_zm
+(1) added 'superpopulation' column by mapping Hapmap3 populations to 1000 Genomes population using Pop_Hapmap3_to_superpopulation
+(2) corrected spelling errors and merged certain synonymous phenotypes
+(3) remove rows with empty Hapmap3 populations
+
+var_varimed_staging_LR_final_ext_eth_spop_zm_<superpopulation>
+--<superpopulation> : AFR, AMR, EAS, EUR, SAS
+--derived from var_varimed_staging_LR_final_ext_eth_spop_zm, stratified by column 'superpopulation'
+
