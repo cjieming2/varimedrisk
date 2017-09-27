@@ -45,3 +45,17 @@ var_varimed_staging_LR_final_ext_eth_spop_zm_<superpopulation>
 --<superpopulation> : AFR, AMR, EAS, EUR, SAS
 --derived from var_varimed_staging_LR_final_ext_eth_spop_zm, stratified by column 'superpopulation'
 
+
+-------------------
+
+var_ld_data_1000genomes_phase3
+--linkage disequilibrium data recalculated from 1000 Genomes Phase 3 data
+--retained only those with r2 >= 0.5
+--LD is calculated according to ethnic populations present in 1000 Genomes Phase 3 data
+--those tables suffixed with 'spop' are grouped according to superpopulations
+
+-------------------
+
+proj_dz_risk_1000Genomes_phase3
+--calculated LRs for all individuals of 1000 Genomes_phase 3 based on LD of superpopulation panel
+
