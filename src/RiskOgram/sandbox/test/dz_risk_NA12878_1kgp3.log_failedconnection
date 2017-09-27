@@ -1,0 +1,7 @@
+Ran LR_patient.pl script...1
+DBD::mysql::st execute failed: Lost connection to MySQL server during query at /scratch/users/chenj/varimed/RiskOgram/sandbox/LR_patient.pl line 121.
+DBD::mysql::st execute failed: Lost connection to MySQL server during query at /scratch/users/chenj/varimed/RiskOgram/sandbox/LR_patient.pl line 121.
+NA12878_snps_all is successfully updated by /scratch/users/chenj/varimed/RiskOgram/sandbox/LR_meta.pl from Wed Feb 22 10:05:32 2017 to Wed Feb 22 10:05:33 2017.
+NA12878_LR is successfully updated by /scratch/users/chenj/varimed/RiskOgram/sandbox/LR_R2.pl from Wed Feb 22 10:05:33 2017 to Wed Feb 22 10:05:34 2017.
+NA12878_dz_risk is successfully updated by /scratch/users/chenj/varimed/RiskOgram/sandbox/combine_LR_single.pl from Wed Feb 22 10:05:34 2017 to Wed Feb 22 10:05:34 2017.
+NA12878_dz_risk and NA12878_LR have been successfully created by /scratch/users/chenj/varimed/RiskOgram/sandbox/dz_risk.pl from Sat Feb 18 19:47:33 2017 to Wed Feb 22 10:05:35 2017.

@@ -1,0 +1,24 @@
+LR_patient 
+real    166m37.148s
+user    0m24.365s
+sys     0m12.897s
+
+ball park runtimes NA12878
+using var_varimed_staging_LR_final_ext_sex_eth_popMT2
+real    53m53.670s
+user    0m9.745s
+sys     0m3.778s
+
+real    54m43.868s
+user    0m9.798s
+sys     0m3.314s
+
+var_varimed_staging_LR_final_ext_sex_eth
+real    194m15.164s
+user    0m40.569s
+sys     0m16.824s
+
+real    202m25.080s
+user    0m41.229s
+sys     0m15.059s
+
