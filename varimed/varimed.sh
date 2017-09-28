@@ -126,7 +126,7 @@ if [[ ${FLAG} == "upload" ]] ; then
 	vcftools --gzvcf ${VCF} --out ${VCF} --snps ${SNP} --remove-indels --recode --recode-INFO-all --stdout | gzip -c > varimed.snps.${VCF}
 	
 	## convert to 3-col file for upload
-	bcftools view varimed.snps.${VCF} | bcftools query -f '[%SAMPLE\t%ID\t%TGT]\n' | grep -v "\." | sed -e 's/\///g' -e 's/\|//g' -e 's/rs//g' > vcf2geno-${NAME}.txt
+	bcftools view varimed.snps.${VCF} | bcftools query -f '[%SAMPLE\t%ID\t%TGT]\n' | grep -v "\." | sed -e 's/\///g' -e 's/|//g' -e 's/rs//g' > vcf2geno-${NAME}.txt
 	
 	## upload to mySQL
 	echo -e "\n>>> Uploading vcf2geno-${NAME}.txt to ${DB}.${TABLE}..."

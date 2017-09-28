@@ -27,7 +27,7 @@ NOTE:
 
 CONTENTS:
 (A) FOLDERS
-(B) varimed.sh
+(B) How to use varimed.sh
 (C) PIPELINE
 (D) MORE TIPS
 (E) TROUBLESHOOTING
@@ -42,16 +42,19 @@ CONTENTS:
                      adapted from RiskGraph scripts in 'src' folder
 3) varimed         - Perl scripts adapted from those in 'src' folder
                    - main script: varimed.sh
+4) example         - example files for the PIPELINE section (EX)
 
 --------------------------------------------------------------------
- varimed/varimed.sh
+ General use varimed/varimed.sh
 --------------------------------------------------------------------
 
 USAGE: 
                varimed.sh <flag> <...> >& my.log
 
 --Type in varimed.sh <flag> for more documentation on syntax.
---This script tries semi-automate the use of VARIMED.
+  E.g. varimed.sh annotate 
+  
+--This script tries  to semi-automate the use of VARIMED.
 
 --It assumes the VariMed resource is on a mySQL server
 --It requires the following to be installed and in PATH:
@@ -61,51 +64,30 @@ USAGE:
    (note that the SQL hostname, username and password are hardcoded 
    in here for convenience, so please change in code)
    4) bgzip
-   
-   
+--See PIPELINE section for more details and practical examples
+
 --FLAG (1-4):
 1: annotate
 >> Use bcftools to annotate ID column of VCF file using VCF.gz file; 
    output: vcf.gz file prefixed with user-defined sample/prefix name
 
-E.g. varimed.sh annotate \
-     dbSNP138 \
-     genotypes.vcf.gz \
-     dbSNP138.vcf.gz
+
 
 2: upload
 >> Filter only VARIMED IDs <rsID file> and upload genotypes to mySQL 
    server; output: vcf.gz file prefixed with 'varimed.snps'. 
    Currently, only SNP analyses, indels are explicitly removed.
 >> NOTE also that currently X, Y and M chrs are included, so if your 
-   var_ld tables do not contain these non-autosomes, your results will 
-   be wrong (because LD accounting will spew errors).
- 
-E.g. varimed.sh upload \
-     samplename \
-     genotypes.vcf.gz \
-     placeholder \
-     rsID.txt \
-     genotype_tablename \
-     database_name
+   var_ld tables do not contain these non-autosomes, the scripts will fail 
+   silently, truncating your results (because LD accounting will spew errors).
+>> rsID file format is a headerless, one-column file of rsIDs
+
+
 
 3: run
 >> Run the risk prediction Perl scripts from wrapper: dz_risk_jc.pl
-## E.g. varimed.sh run \
-        hostname \
-        username \
-        database_name \
-        password \
-        genotype_tablename \
-        varimed_databasename.varimed_tablename \
-        LD_databasename.chr_EUR_spop \
-        output_LR_tablename \
-        output_dz_risk_tablename \
-        output_snps_all_tablename \
-        min_gwas_num \
-        min_gwas_size \
-        min_p_val \ 
-        >& logfile
+
+
 
 4: compile
 >> Downloads the results from the mySQL database and then compile
@@ -122,41 +104,88 @@ E.g. varimed.sh compile \
 
 (1) Annotate VCF/BCF files with rsIDs
    
-   use 'varimed.sh annotate <> '
+    varimed.sh annotate <PREFIXNAME> <GENOTYPEFILE vcf.gz> <DBSNPFILE vcf.gz>
+    
+EX:
+   varimed.sh annotate \
+   dbSNP138 \ ## output file prefix
+   genotypes_test.vcf.gz \
+   dbsnp_138.hg19.noChr.test.vcf.gz >& varimed_annotate_test.log
+   
+      
+--remember to index the VCF/BCF files before you do this.
+--output: file PREFIXNAME_GENOTYPEFILE
 
 
 
-(2) Format SNP genotype information from personal genome
 
---VARIMED genotype file format (include header):
+
+
+(2) Format and Upload
+
+    varimed.sh upload <SAMPLENAME> <GENOTYPEFILE vcf.gz> <RSID txt> <DBNAME> <TABLENAME>
+
+EX:
+   varimed.sh upload \
+   test_HG00096 \
+   dbSNP138_genotypes_test.vcf.gz \ ## 'annotate' output
+   <(awk '{OFS="\t"}{FS="\t"}{print "rs"$0}' var_varimed_Association_Data_fwd.uniq.rsID) \
+   test \
+   test_HG00096_genotypes >& varimed_upload_test.log
+    
+--Format SNP genotype information from personal genome and
+--Upload to mySQL database
+--this might require manual modification of the Python script 
+  loadgenotypefile2sql.py for database name, user name and password
+--rsID file format is a headerless, one-column file of rsIDs
+  e.g. you could want to keep only the rsIDs found in VARIMED 
+  to expedite analyses (e.g. var_varimed_Association_Data_fwd.uniq.rsID)
+  var_varimed_Association_Data_fwd.uniq.rsID does not contain 'rs'
+  so the command below adds 'rs' before running.
+
+rs10000010
+rs10000012
+rs10000017
+rs1000002
+
+--output 1 : file prefixed vcf2geno VARIMED genotype file format (include header):
 col1 sample_ID: sample name (should be all the same)
 col2 dbSNP    : dbSNP rsID (without 'rs', just the numbers)
 col3 genotype : genotype in a 2-letter format: e.g. AA, CT
 
---This can be obtained by in a variety of ways: e.g. writing a script, using 
-  bash one-liners, and bcftools (if sequencing information from BCF files)
---E.g. This bash/bcftools combo formats and removes records that are not
-  SNPs, with empty genotypes and missing rsIDs. The command also removes
-  'rs' prefixes and typical '/' and '|' in VCFs that denote phase information.
-  bcftools view -s <VCF> | \
-  bcftools query -f '[%CHROM\t%SAMPLE\t%ID\t%TGT]\n' | \
-  awk '{OFS="\t"}{FS="\t"}{if($1 ~ /^[0-9]+$/ && length($4) > 2){print $2,$3,$4}}' | \
-  grep -v "\." | \
-  sed -e 's/\///g' -e 's/|//g' -e 's/rs//g' > <VAR-GENO-OUTPUT>
-  
-  
+HG00096	3019885	TT
+HG00096	7025486	GA
+HG00096	1466535	AA
+HG00096	4900514	TC 
 
-(3) Upload to mySQL database
+--output 2 : file prefixed varimed.snps filtered VCF
+
+
+NOTE: you might see warnings due to creating a new table.
+
+
+
+
+(3) Run dz_risk_jc.pl Perl wrapper script
+
+    varimed.sh run <HOST> <USER> <DB> <password> <INPUT_GENO_TABLE> <INPUT_VARIMED_TABLE> <INPUT_LD_TABLE> <OUTPUT_TABLE_LR> <OUTPUT_TABLE_DZ_RISK> <OUTPUT_TABLE_SNP_ALL> <NUMGWAS> <SIZGWAS> <PMIN>
+    
+EX:
+   varimed.sh run \
+   <server> \
+   <username> \
+   <database name> \
+   <password> \
+   test_HG00096_genotypes \ ## 'upload' output
+   user_chenj.var_varimed_staging_LR_final_ext_sex_eth_spop_zm_EUR \
+   var_ld_data_1000genomes_phase3.chr_EUR_spop \
+   HG00096_spop_test_EUR_LR HG00096_spop_test_EUR_dz_risk \
+   HG00096_spop_test_EUR_snps_all \
+   2 \
+   200 \
+   0.000001 >& varimed_run_test.log
    
-   use 'varimed.sh upload <> '
-
-## this requires manual modification of the Python script 
-loadgenotypefile2sql.py
-
-
-
-
-(4) Run dz_risk_jc.pl Perl wrapper script
+   
 
 --this step is the main workhorse for risk prediction
 --each run is for one personal genome, for all the phenotypes
@@ -212,6 +241,26 @@ dz_risk_jc.pl
 
 
 
+(4) Compile
+ 
+    varimed.sh compile <SAMPLEFILE> <DB>
+    
+    
+EX:
+   varimed.sh compile \
+   <(echo -e "HG00096_spop_test_EUR\tEUR") \
+   test
+
+--<SAMPLEFILE> = a 2-col file, with col1=sample-id, col2=population; no header
+HG00096	EUR
+HG00097	EUR
+
+--output: combined_dz_risk.txt and 2 folders, LR and snps_all containing the 
+          file format of the individual tables
+
+
+
+
 (5) RiskOgram visualization in R
 
 RiskGraph_argument_JC.Rmd
@@ -228,8 +277,6 @@ RiskGraph_argument_compile_JC.Rmd
    VARIMED tables, using the population columns.
    
 2) Look out for errors in phenotype names
-
-
 
 
 

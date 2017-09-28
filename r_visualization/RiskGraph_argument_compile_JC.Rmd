@@ -282,12 +282,12 @@ riskOGramForCondition <- function(condition, riskA=riskAlleles, preTP=preTestPro
 #### Main function: Look at overall risk ####
 
 ## JC loop connect using one example in R
-db.host <- "127.0.0.1"
+db.host <- "127.0.6.7"
 db.name <- "proj_dz_risk_ipop"
-db.user <- "chenj"
-db.password <- "3VrTh60IlfiHjLATiVkKn8orM"
+db.user <- "chenjie"
+db.password <- ""
 snps.all.table <- "69_065_spop_SAS_snps_all"
-pretest.table <- "user_chenj.pretest_indian_female"
+pretest.table <- "user_chenjie.pretest_indian_female"
 
 samplefile <- read.table("/Users/jiemingchen/Documents/varimed/ipop/riskOgrams/samplelist-with-pretest-full71.txt", header = T, stringsAsFactors = F)
 snps.all.table <- as.vector(mapply(function(x,y) paste(x, "_spop_", y, "_snps_all", sep=""), 

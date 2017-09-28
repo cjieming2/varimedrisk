@@ -1,0 +1,4 @@
+broad_phenotype	LR	LR_max	SNP_risk	SNP_protective	sample-id	population
+broad_phenotype	LR	LR_max	SNP_risk	SNP_protective	sample-id	population
+Abdominal_aortic_aneurysm	0.892957624293	0.815072	2	2	HG00096_spop_test_EUR	EUR
+Abdominal_aortic_aneurysm	0.892957624293	0.815072	2	2	HG00096_spop_test_EUR	EUR

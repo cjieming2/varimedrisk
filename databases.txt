@@ -1,20 +1,23 @@
 --------------------------------------
- varimed_resources_JC2017
+ database : varimed_resources_JC2017
 --------------------------------------
+ 
+This database contains the following sets of tables:
 
-Pop_Hapmap3_to_superpopulation
+(A) Pop_Hapmap3_to_superpopulation
 --mapping Hapmap3 populations to a 1000 Genomes Phase 3 superpopulation
 
-pretest_<ancestry>_<gender>
+(B) pretest_<ancestry>_<gender>
 --<ancestry> : african, asian, black, caucasian, hispanic, indian
 --<gender>   : male, female
 --total of 10 tables
 --those suffixed with 'old' are, as such, the older version that was inherited
 
-var_varimed_Association_Data_fwd
+(C) var_varimed_Association_Data_fwd
 --inherited full VARIMED
 
-var_varimed_Association_Data_fwd_final
+(D) var_varimed_Association_Data_fwd_final
+--JC uses this
 --JC2017 changes to var_varimed_Association_Data_fwd:
 (1) retain rows with biallelic loci
 (2) non-empty OR
@@ -22,10 +25,11 @@ var_varimed_Association_Data_fwd_final
 (4) included columns 'fxn_type' and 'symbol' (from var_dbSNP_b138.SnpFunctionCode and var_dbSNP_b138.SNPContigLocusId; but contains redundant rows, so removed all rows with 'fxn_type' = 'cds-reference')
 (5) included columns 'chr' and 'position'
 
-var_varimed_staging_LR_final
+(E) var_varimed_staging_LR_final
 --inherited table with LR info 
 
-var_varimed_staging_LR_final_ext
+(F) var_varimed_staging_LR_final_ext
+--JC uses this
 --JC2017 extended version with the following modifications:
 (1) added column 'id' of running numbers
 (2) added column 'cases' (LIKE 'Sample_size_cases')
@@ -33,29 +37,41 @@ var_varimed_staging_LR_final_ext
 (4) added column 'end' (LIKE 'position')
 (5) included columns 'fxn_type' and 'symbol' as above
 
-var_varimed_staging_LR_final_ext_eth
+(G) var_varimed_staging_LR_final_ext_eth
 (1) added 'Population', 'Population_simple', 'Pop_Hapmap3' and 'gender' info from var_varimed_Association_Data_fwd and var_varimed_staging_LR_final_ext
 
-var_varimed_staging_LR_final_ext_eth_spop_zm
+(H) var_varimed_staging_LR_final_ext_eth_spop_zm
 (1) added 'superpopulation' column by mapping Hapmap3 populations to 1000 Genomes population using Pop_Hapmap3_to_superpopulation
 (2) corrected spelling errors and merged certain synonymous phenotypes
 (3) remove rows with empty Hapmap3 populations
 
-var_varimed_staging_LR_final_ext_eth_spop_zm_<superpopulation>
+(I) var_varimed_staging_LR_final_ext_eth_spop_zm_<superpopulation>
+--JC uses these tables
 --<superpopulation> : AFR, AMR, EAS, EUR, SAS
 --derived from var_varimed_staging_LR_final_ext_eth_spop_zm, stratified by column 'superpopulation'
 
 
--------------------
+-------------------------------------------
+ database : var_ld_data_1000genomes_phase3
+-------------------------------------------
 
-var_ld_data_1000genomes_phase3
+--tables are by chromosome, and by ethnic population, in the format, e.g. chr1_CEU or chr1_EUR_spop
+--LD is calculated according to ethnic populations present in 1000 Genomes Phase 3 data
 --linkage disequilibrium data recalculated from 1000 Genomes Phase 3 data
 --retained only those with r2 >= 0.5
---LD is calculated according to ethnic populations present in 1000 Genomes Phase 3 data
 --those tables suffixed with 'spop' are grouped according to superpopulations
 
--------------------
+-------------------------------------------
+ database : proj_dz_risk_1000Genomes_phase3
+-------------------------------------------
 
-proj_dz_risk_1000Genomes_phase3
---calculated LRs for all individuals of 1000 Genomes_phase 3 based on LD of superpopulation panel
+--4 sets of tables: 
+(1) <sample_ID>_<superpopulation>_genotype         : genotypes in SNVs of sample_ID
+(2) <sample_ID>_spop_zm_<superpopulation>_dz_risk  : calculated disease risks for each disease in VARIMED in sample_ID
+    col1: LR              : chained LR for all SNVs used for that disease
+    col2: LR_max          : max LR out of all SNVs used for that disease
+    col3: SNP_risk        : number of risk SNVs
+    col4: SNP_protective  : number of protective SNVs
+(3) <sample_ID>_spop_zm_<superpopulation>_LR       : corresponding full records from VARIMED
+(4) <sample_ID>_spop_zm_<superpopulation>_snps_all : all the SNVs used in the calculation
 

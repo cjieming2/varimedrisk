@@ -1,0 +1,5 @@
+broad_phenotype	dbSNP	genotype	LR	study_cnt	sample_size	chromosome	end	fxn_type	symbol	study_cnt_total	gwas_study_cnt	gwas_sample_size
+Abdominal aortic aneurysm	1466535	AA	0.815072	3	14695	12	57534470	intron	LRP1	3	3	105570
+Abdominal aortic aneurysm	4900514	TC	0.987768	3	7011	14	101971043	NA	NA	2	2	35426
+Abdominal aortic aneurysm	3019885	TT	1.00723	2	35465	8	118025645	intron	SLC30A8	2	2	50160
+Abdominal aortic aneurysm	7025486	GA	1.10116	5	36599	9	124422403	intron	DAB2IP	2	2	77904
